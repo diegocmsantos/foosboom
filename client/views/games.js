@@ -53,25 +53,21 @@ function btnSubmitGameClick( e, tpl ) {
 	var teamOneName = tpl.$("select[name=teamOne] option:selected").text();
 	var teamTwoId = tpl.$( '[name=teamTwo]' ).val();
 	var teamTwoName = tpl.$("select[name=teamTwo] option:selected").text();
-	console.log( teamOneId );
-	console.log( teamOneName );
-	console.log( teamTwoId );
-	console.log( teamTwoName );
 
-	var game = {
-      completed: false,
-      createdAt: new Date(),
-      teams: [
-        {name: teamOneName, _id: teamOneId, score: 0},
-        {name: teamTwoName, _id: teamTwoId, score: 0}
-      ]
-    };
-   
-    gameId = Games.insert(game);
+    Meteor.call( 'gamesInsert', teamOneId, teamTwoId, function( error, response ) {
 
-    // Add this game to both teams gameIds
-    Teams.update({_id: teamOneId}, {$addToSet: { gameIds: gameId}});
-    Teams.update({_id: teamTwoId}, {$addToSet: { gameIds: gameId}});
+        if ( error ) {
+
+            alert( error.reason );
+            Session.get( 'isCreatingGame', true );
+            Tracker.afterFlush(function(){
+                tpl.$("select[name=teamOne]").val(teamOneId);
+                tpl.$("select[name=teamTwo]").val(teamTwoId);
+            });
+
+        }
+
+    } );
 
     Session.set('isCreatingGame', false);
 

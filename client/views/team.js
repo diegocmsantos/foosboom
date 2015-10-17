@@ -10,9 +10,9 @@ Template.team.events({
 
 	"click a.edit": fillEditedTeamId,
  
-  	"submit form.form-edit": btnSubmitEditForm,
+  "submit form.form-edit": btnSubmitEditForm,
  
-  	"click a.cancel": btnCancelEditForm,
+  "click a.cancel": btnCancelEditForm,
 
 	'click a.remove': btnRemoveTeamClick
 
@@ -29,11 +29,30 @@ function btnSubmitEditForm( e, tpl ) {
 
 	e.preventDefault();
  
-    var teamName = tpl.$('input[name="name"]').val();
-    if(teamName.length){
-    	Teams.update(this._id, {$set: {name: teamName}});
-      	Session.set('editedTeamId', null);
-    }
+  var teamName = tpl.$("input[name=name]").val();
+  var self = this;
+
+  if( teamName.length ){
+
+    Meteor.call( "teamUpdate", this._id, teamName, function( error ) {
+
+      if( error ) {
+
+        alert(error.reason);
+        Session.set('editedTeamId', self._id);
+
+        Tracker.afterFlush(function() {
+          tpl.$("input[name=name]").val(teamName);
+          tpl.$("input[name=name]").focus();
+        });
+
+      }
+
+    });
+
+    Session.set('isEditingTeam', null);
+    
+  }
 
 }
 

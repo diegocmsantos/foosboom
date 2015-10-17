@@ -17,4 +17,11 @@ es5-shim                # ECMAScript 5 compatibility for older browsers.
 ecmascript              # Enable ECMAScript2015+ syntax in app code
 
 msavin:mongol
-insecure
+accounts-password
+accounts-ui
+check
+ejson
+iron:router
+zimme:active-route
+sacha:spin
+aldeed:collection2

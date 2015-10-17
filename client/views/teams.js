@@ -35,17 +35,29 @@ function btnCancelClick( e, template ) {
 function btnSubmitClick( e, template ) {
 
 	e.preventDefault();
-	var teamName = template.$('input[name=name]').val();
 
-    Teams.insert({name: teamName}, function(error, _id){
-    	if(error){
-       		alert(error);
+    var team = {
+        name: template.$('input[name=name]').val(),
+        ownerId: Meteor.userId()
+    }
+
+    Teams.insert( team, function( error, _id ){
+
+    	if( error ) {
+
+       		alert( error );
+
         	Session.set('isCreatingTeam', true);
-        	Tracker.afterFlush(function(){
+
+        	Tracker.afterFlush( function() {
+
           		template.$('input[name=name]').val(teamName);
-        	});
+
+        	} );
+
       	}
-    });
+
+    } );
 
     Session.set('isCreatingTeam', false);
 

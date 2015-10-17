@@ -39,6 +39,15 @@ function btnFinishGameClick( e, tpl ) {
 function btnDeleteGameClick( e, tpl ) {
 
 	e.preventDefault();
-    Games.remove(this._id);
+    var gameId  = this._id;
+    var teamIdA = this.teams[0]._id;
+    var teamIdB = this.teams[1]._id;
+
+    Games.remove(gameId, function (error) {
+      if (!error) {
+        Teams.update({_id: teamIdA}, {$pull: {gameIds: gameId}});
+        Teams.update({_id: teamIdB}, {$pull: {gameIds: gameId}});
+      }
+    });
 
 }
